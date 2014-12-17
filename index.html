@@ -43,11 +43,9 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 				<section>
-				  <h1>Cloud Austin</h1>
-					<h2>12 Clouds of Christmas</h2>
-					<br><br><br>
-					<p>Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Rocket Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker</p>
-					<br><bR><br>
+				  <h1>Cloud Docker</h1>
+					<h2>12 Dockers of Docker</h2>
+					<p>Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Rocket Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker Docker</p>
 					<p>
 						<small>Created by <a href="http://tech.paulcz.net">Paul Czarkowski</a> / <a href="http://twitter.com/pczarkowski">@pczarkowski</a></small>
 					</p>
@@ -57,170 +55,12 @@
 				  <h1>Cloud Austin</h1>
 					<h2>12 Clouds of Christmas</h2>
 					<br><br><br>
-					<p>Private CI/CD using Docker, Drone, Deis</p>
+					<p>Private CI/CD using Docker, Deis, and Drone</p>
 					<br><bR><br>
 					<p>
 						<small>Created by <a href="http://tech.paulcz.net">Paul Czarkowski</a> / <a href="http://twitter.com/pczarkowski">@pczarkowski</a></small>
 					</p>
 				</section>
-
-				<section>
-				  <h1>Drone</h1>
-				  <ul>
-				    <li>Automated Tests / Builds.
-				    <lI>Very similar to TravisCI.
-				    <li>Available as both SaaS and OpenSource.
-				    <li>Tests/Builds run in Docker containers.
-				    <li>Installable from a .deb on Ubuntu.
-				    <li>Oauth integration - github, gitlab, bitbucket
-				    <li>Poor performance unless AUFS.
-				  </ul>
-				</section>
-
-				<section>
-				  <h1>.drone.yml</h1>
-				  <p>Very similar to .travis.yml
-				  <pre class="stretch"><code>
-image: paulczar/meez
-env:
-  - USE_SYSTEM_GECODE=1
-script:
-  - bundle install && berks install
-  - rake tests
-  - berks package /tmp/my-cookbook.tgz
-notify:
-  email:
-    recipients: paul@paulcz.net
-publish:
-  swift:
-    username: paulczar
-    password: {{ swift_pass }}
-    container: cookbooks
-    source: /tmp/my-cookbook.tgz
-    target: my-cookbook.tgz
-
-				  </code></pre>
-        </section>
-
-				<section>
-				<h2>Drone Simple Architecture</h2>
-				<p><pre>
-+---------------------------------+
-|                                 |
-|       +----------------+        |
-|       |                |        |
-|       |     SQLite     |        |
-|       |                |        |
-|       +----------------+        |
-|                                 |
-|       +----------------+        |
-|       |                |        |
-|       |     Droned     |        |
-|       |                |        |
-|       +----------------+        |
-|                                 |
-|       +----------------+        |
-|       |                |        |
-|       |     Docker     |        |
-|       |                |        |
-|       +----------------+        |
-|                                 |
-|                                 |
-|            Ubuntu               |
-|                                 |
-+---------------------------------+
-
-				</pre></p>
-				</section>
-
-				<section>
-				<h2>Drone Complex Architecture</h2>
-				<p><pre class="stretch">
-                   +---------------------------------+
-                   |                                 |
-                   |              Amazon ELB         |
-                   |                                 |
-                   +------------------+--------------+
-                                      |
-                          +----------------------+        +--------------------+
-+---------------+         |           |          |        |                    |
-|               |         |  +--------+-------+  |        |  +--------------+  |
-|     Amazon    | <--------+ |                |  |        |  |              |  |
-|      RDS      |         |  |     Droned     | +----------> |    Docker    |  |
-|               |         |  |                |  |        |  |              |  |
-+---------------+         |  +-------++-------+  |        |  +--------------+  |
-                          |          ||          |        |                    |
-                          |  +-------++-------+  |        |                    |
-                          |  |                |  |        |       CoreOS       |
-                          |  |     Docker     |  |        |                    |
-                          |  |                |  |        +--------------------+
-                          |  +----------------+  |
-                          |                      |
-                          |                      |
-                          |       CoreOS         |
-                          |                      |
-                          +----------------------+
-
-
-				</pre></p>
-				</section>
-
-				<section>
-				  <h2>Installing Drone</h2>
-				  <p>Quick and Easy:</p>
-				  <pre><code>
-
-
-$ curl -Ssl http://get.docker.com | bash
-$ wget downloads.drone.io/master/drone.deb
-$ sudo dpkg -i drone.deb
-
-
-</code></pre>
-					<p>DevOpsy:</p>
-					<ul>
-					<li>https://github.com/justincampbell/chef-drone
-					</ul>
-					</section>
-
-				<section>
-				  <h2>Using Drone</h2>
-				  <p>from the CLI
-				  <pre><code>
-
-$ git clone https://github.com/paulczar/example-python-flask.git
-$ cd example-python-flask
-$ drone build .
-[DRONE] creating build image
-[DRONE] copying repository to /var/cache/drone/src/example-python-flask
-[DRONE] starting build
-[DRONE] temp directory is /tmp/drone
-$ pip install tox
-Downloading/unpacking tox
-  Running setup.py egg_info for package tox
-
-Downloading/unpacking virtualenv>=1.11.2 (from tox)
-  Running setup.py egg_info for package virtualenv
-Requirement already satisfied (use --upgrade to upgrade): py>=1.4.17 in /home/ubuntu/virtualenv/python2.7/lib/python2.7/site-packages (from tox)
-...
-...
-$ tox
-pep8 create: /var/cache/drone/src/example-python-flask/.tox/pep8
-pep8 installdeps: -r/var/cache/drone/src/example-python-flask/requirements.txt, -r/var/cache/drone/src/example-python-flask/test-requirements.txt
-pep8 runtests: PYTHONHASHSEED='187694681'
-pep8 runtests: commands[0] | pep8 --show-source --show-pep8 .
-___________________________________ summary ____________________________________
-  pep8: commands succeeded
-  congratulations :)
-$ exit 0
-[DRONE] removing build container
-[DRONE] removing build image
-
-Drone Build Results (/tmp/example-python-flask)
- ✓  (15 seconds)
-
-</code></pre>
-					</section>
 
 				<section>
 				  <h1>Deis</h1>
@@ -296,10 +136,23 @@ POWERED By Deis
 </code></pre>
 				</section>
 
-				<section>
-				  <h2>Tying them together</h2>
-				  <p>Have Drone deploy to Deis on successful build.
-				  <pre class="stretch"><code>
+        <section>
+          <h1>Drone</h1>
+          <ul>
+            <li>Automated Tests / Builds.
+            <lI>Very similar to TravisCI.
+            <li>Available as both SaaS and OpenSource.
+            <li>Tests/Builds run in Docker containers.
+            <li>Installable from a .deb on Ubuntu.
+            <li>Oauth integration - github, gitlab, bitbucket
+            <li>Poor performance unless AUFS.
+          </ul>
+        </section>
+
+        <section>
+          <h1>.drone.yml</h1>
+          <p>Very similar to .travis.yml
+          <pre class="stretch"><code>
 image: python:2
 script:
   - pip install tox
@@ -309,19 +162,133 @@ notify:
     username: devop
     token: {{ slack_token }}
     team: cloud_austin
-    on_started: true
-    on_success: true
-    on_failure: true
 deploy:
   git:
     target: ssh://git@deis.173.247.105.8.xip.io:2222/gifted-hardtack.git
     branch: master
     force: false
-  docker:
-    username: devop
-    password: {{ docker_pass }}
+          </code></pre>
+        </section>
+
+        <section>
+        <h2>Drone Simple Architecture</h2>
+        <p><pre>
++---------------------------------+
+|                                 |
+|       +----------------+        |
+|       |                |        |
+|       |     SQLite     |        |
+|       |                |        |
+|       +----------------+        |
+|                                 |
+|       +----------------+        |
+|       |                |        |
+|       |     Droned     |        |
+|       |                |        |
+|       +----------------+        |
+|                                 |
+|       +----------------+        |
+|       |                |        |
+|       |     Docker     |        |
+|       |                |        |
+|       +----------------+        |
+|                                 |
+|                                 |
+|            Ubuntu               |
+|                                 |
++---------------------------------+
+
+        </pre></p>
+        </section>
+
+        <section>
+        <h2>Drone Complex Architecture</h2>
+        <p><pre class="stretch">
+                   +---------------------------------+
+                   |                                 |
+                   |              Amazon ELB         |
+                   |                                 |
+                   +------------------+--------------+
+                                      |
+                          +----------------------+        +--------------------+
++---------------+         |           |          |        |                    |
+|               |         |  +--------+-------+  |        |  +--------------+  |
+|     Amazon    | <--------+ |                |  |        |  |              |  |
+|      RDS      |         |  |     Droned     | +----------> |    Docker    |  |
+|               |         |  |                |  |        |  |              |  |
++---------------+         |  +-------++-------+  |        |  +--------------+  |
+                          |          ||          |        |                    |
+                          |  +-------++-------+  |        |                    |
+                          |  |                |  |        |       CoreOS       |
+                          |  |     Docker     |  |        |                    |
+                          |  |                |  |        +--------------------+
+                          |  +----------------+  |
+                          |                      |
+                          |                      |
+                          |       CoreOS         |
+                          |                      |
+                          +----------------------+
+
+
+        </pre></p>
+        </section>
+
+        <section>
+          <h2>Installing Drone</h2>
+          <p>Quick and Easy:</p>
+          <pre><code>
+
+
+$ curl -Ssl http://get.docker.com | bash
+$ wget downloads.drone.io/master/drone.deb
+$ sudo dpkg -i drone.deb
+
+
 </code></pre>
-				</section>
+          <p>DevOpsy:</p>
+          <ul>
+          <li>https://github.com/justincampbell/chef-drone
+          </ul>
+          </section>
+
+        <section>
+          <h2>Using Drone</h2>
+          <p>from the CLI
+          <pre><code>
+
+$ git clone https://github.com/paulczar/example-python-flask.git
+$ cd example-python-flask
+$ drone build .
+[DRONE] creating build image
+[DRONE] copying repository to /var/cache/drone/src/example-python-flask
+[DRONE] starting build
+[DRONE] temp directory is /tmp/drone
+$ pip install tox
+Downloading/unpacking tox
+  Running setup.py egg_info for package tox
+
+Downloading/unpacking virtualenv>=1.11.2 (from tox)
+  Running setup.py egg_info for package virtualenv
+Requirement already satisfied (use --upgrade to upgrade): py>=1.4.17 in /home/ubuntu/virtualenv/python2.7/lib/python2.7/site-packages (from tox)
+...
+...
+$ tox
+pep8 create: /var/cache/drone/src/example-python-flask/.tox/pep8
+pep8 installdeps: -r/var/cache/drone/src/example-python-flask/requirements.txt, -r/var/cache/drone/src/example-python-flask/test-requirements.txt
+pep8 runtests: PYTHONHASHSEED='187694681'
+pep8 runtests: commands[0] | pep8 --show-source --show-pep8 .
+___________________________________ summary ____________________________________
+  pep8: commands succeeded
+  congratulations :)
+$ exit 0
+[DRONE] removing build container
+[DRONE] removing build image
+
+Drone Build Results (/tmp/example-python-flask)
+ ✓  (15 seconds)
+
+</code></pre>
+          </section>
 
 				<section>
 					<h1>Demo</h1>
